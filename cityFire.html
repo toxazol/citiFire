@@ -1,0 +1,96 @@
+<body style="background-color: #888; margin: 20px;"></body>
+<script>
+let canvas = document.createElement('canvas');
+let w, h;
+w = h = canvas.height = canvas.width = 602;
+canvas.off = parseInt(document.body.style.margin);
+canvas.style.backgroundColor = '#bbb';
+document.body.appendChild(canvas);
+let ctx = canvas.getContext('2d');
+
+class city{
+	constructor(n, t=1){
+		this.n = n;
+		this.t = t;
+		this.step = (w-2*t)/this.n;
+	}
+	draw(rgb='#000'){
+		ctx.strokeStyle = rgb;
+		ctx.lineWidth = this.t;
+		for(let x=this.t; x<w; x+=this.step){
+			ctx.beginPath();
+			ctx.moveTo(x, 0);
+			ctx.lineTo(x, h);
+			ctx.stroke();
+			ctx.closePath();
+		}
+		for(let y=this.t; y<h; y+=this.step){
+			ctx.beginPath();
+			ctx.moveTo(0, y);
+			ctx.lineTo(w, y);
+			ctx.stroke();
+			ctx.closePath();
+		}
+	}
+	fill(n, m, rgb='#f44336'){
+		ctx.fillStyle = rgb;
+		ctx.fillRect(m*this.step+this.t, n*this.step+this.t, this.step, this.step);
+		this.draw();
+	}
+	toN(y){
+		return Math.floor((y-this.t)/this.step);
+	}
+	toM(x){
+		return Math.floor((x-this.t)/this.step);
+	}
+}
+class fire{
+	constructor(n, m, city, r=0){
+		this.n = n;
+		this.m = m;
+		this.r = r;
+		this.city = city;
+	}
+	draw(rgb='#f44336'){
+		let a = 2*this.r + 1;
+		let n0 = this.n - this.r, m0 = this.m - this.r;
+		for(let ni=0; ni < a; ++ni)
+			for(let mi=0; mi < a; ++mi)
+				this.city.fill(n0+ni, m0+mi);
+	}
+	spread(){
+		this.r++;
+	}
+	// hit(x, y){
+	// 	let n = this.city.toN(y);
+	// 	let m = this.city.toM(x);
+	// 	if(n == this.n && m >= this.m && m < this.m+this.x){
+	// 		this.dragFlag = true;
+	// 		this.hitM = m;
+	// 		return true;
+	// 	}
+	// 	return false;
+	// }
+}
+
+
+let city20 = new city(20);
+let fires = [];
+city20.draw();
+fires.push(new fire(3, 4, city20));
+fires.push(new fire(19, 15, city20));
+for (let f of fires){
+	f.spread();
+	f.draw();
+}
+
+// let wasHit = false;
+// canvas.onclick = (e) =>{
+// 	wasHit = false;
+// 	for(let n of nums){
+// 		n.dragFlag = false;
+// 	}
+// }
+
+
+</script>
